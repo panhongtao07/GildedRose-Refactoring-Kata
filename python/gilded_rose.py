@@ -20,34 +20,25 @@ class GildedRose:
         item.quality += value
         item.quality = max(0, min(self.MAX_QUALITY, item.quality))
 
-    def _increase_quality(self, item: 'Item', value: int = 1):
-        self._update_quality(item, value)
-
-    def _decrease_quality(self, item: 'Item', value: int = 1):
-        self._update_quality(item, -value)
+    def _delta_with_time(self, name: str, sell_in: int) -> int:
+        delta = -1
+        if name == "Aged Brie":
+            delta = 1
+        elif name == "Backstage passes to a TAFKAL80ETC concert":
+            delta = 1 + (sell_in < 10) + (sell_in < 5)
+        if sell_in < 0:
+            delta *= 2
+        return delta
 
     def update_quality(self):
         for item in self.items:
             if self.is_item_immutable(item):
                 continue
             item.sell_in -= 1
-            if item.name == "Aged Brie":
-                self._increase_quality(item)
-            elif item.name == "Backstage passes to a TAFKAL80ETC concert":
-                self._increase_quality(item)
-                if item.sell_in < 10:
-                    self._increase_quality(item)
-                if item.sell_in < 5:
-                    self._increase_quality(item)
-            else:
-                self._decrease_quality(item)
-            if item.sell_in < 0:
-                if self.is_time_sensitive(item):
-                    item.quality = 0
-                elif item.name == "Aged Brie":
-                    self._increase_quality(item)
-                else:
-                    self._decrease_quality(item)
+            if item.sell_in < 0 and self.is_time_sensitive(item):
+                item.quality = 0
+                continue
+            self._update_quality(item, self._delta_with_time(item.name, item.sell_in))
 
 
 class Item:
