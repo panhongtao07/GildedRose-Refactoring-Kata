@@ -28,6 +28,8 @@ class GildedRose:
             delta = 1 + (sell_in < 10) + (sell_in < 5)
         if sell_in < 0:
             delta *= 2
+        if name.startswith("Conjured"):
+            delta *= 2
         return delta
 
     def update_item(self, item: 'Item'):
