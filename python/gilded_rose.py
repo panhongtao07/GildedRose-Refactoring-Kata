@@ -6,7 +6,13 @@ class GildedRose:
     def __init__(self, items: list['Item']):
         self.items = items
 
+    @staticmethod
+    def is_item_immutable(item: 'Item') -> bool:
+        return item.name == "Sulfuras, Hand of Ragnaros"
+
     def _update_quality(self, item: 'Item', value: int = 1):
+        if self.is_item_immutable(item):
+            return
         item.quality += value
         item.quality = max(0, min(self.MAX_QUALITY, item.quality))
 
@@ -19,8 +25,7 @@ class GildedRose:
     def update_quality(self):
         for item in self.items:
             if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
-                if item.name != "Sulfuras, Hand of Ragnaros":
-                    self._decrease_quality(item)
+                self._decrease_quality(item)
             else:
                 self._increase_quality(item)
                 if item.name == "Backstage passes to a TAFKAL80ETC concert":
@@ -28,13 +33,12 @@ class GildedRose:
                         self._increase_quality(item)
                     if item.sell_in < 6:
                         self._increase_quality(item)
-            if item.name != "Sulfuras, Hand of Ragnaros":
+            if not self.is_item_immutable(item):
                 item.sell_in = item.sell_in - 1
             if item.sell_in < 0:
                 if item.name != "Aged Brie":
                     if item.name != "Backstage passes to a TAFKAL80ETC concert":
-                        if item.name != "Sulfuras, Hand of Ragnaros":
-                            self._decrease_quality(item)
+                        self._decrease_quality(item)
                     else:
                         item.quality = 0
                 else:
