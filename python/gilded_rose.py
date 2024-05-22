@@ -30,15 +30,18 @@ class GildedRose:
             delta *= 2
         return delta
 
+    def update_item(self, item: 'Item'):
+        if self.is_item_immutable(item):
+            return
+        item.sell_in -= 1
+        if item.sell_in < 0 and self.is_time_sensitive(item):
+            item.quality = 0
+            return
+        self._update_quality(item, self._delta_with_time(item.name, item.sell_in))
+
     def update_quality(self):
         for item in self.items:
-            if self.is_item_immutable(item):
-                continue
-            item.sell_in -= 1
-            if item.sell_in < 0 and self.is_time_sensitive(item):
-                item.quality = 0
-                continue
-            self._update_quality(item, self._delta_with_time(item.name, item.sell_in))
+            self.update_item(item)
 
 
 class Item:
