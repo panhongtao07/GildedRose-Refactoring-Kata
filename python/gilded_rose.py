@@ -24,25 +24,26 @@ class GildedRose:
 
     def update_quality(self):
         for item in self.items:
-            if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
-                self._decrease_quality(item)
-            else:
+            if self.is_item_immutable(item):
+                continue
+            item.sell_in -= 1
+            if item.name == "Aged Brie":
                 self._increase_quality(item)
-                if item.name == "Backstage passes to a TAFKAL80ETC concert":
-                    if item.sell_in < 11:
-                        self._increase_quality(item)
-                    if item.sell_in < 6:
-                        self._increase_quality(item)
-            if not self.is_item_immutable(item):
-                item.sell_in = item.sell_in - 1
-            if item.sell_in < 0:
-                if item.name != "Aged Brie":
-                    if item.name != "Backstage passes to a TAFKAL80ETC concert":
-                        self._decrease_quality(item)
-                    else:
-                        item.quality = 0
-                else:
+            elif item.name == "Backstage passes to a TAFKAL80ETC concert":
+                self._increase_quality(item)
+                if item.sell_in < 10:
                     self._increase_quality(item)
+                if item.sell_in < 5:
+                    self._increase_quality(item)
+            else:
+                self._decrease_quality(item)
+            if item.sell_in < 0:
+                if item.name == "Aged Brie":
+                    self._increase_quality(item)
+                elif item.name == "Backstage passes to a TAFKAL80ETC concert":
+                    item.quality = 0
+                else:
+                    self._decrease_quality(item)
 
 
 class Item:
