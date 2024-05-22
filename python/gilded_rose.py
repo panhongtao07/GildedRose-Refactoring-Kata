@@ -10,6 +10,10 @@ class GildedRose:
     def is_item_immutable(item: 'Item') -> bool:
         return item.name == "Sulfuras, Hand of Ragnaros"
 
+    @staticmethod
+    def is_time_sensitive(item: 'Item') -> bool:
+        return item.name == "Backstage passes to a TAFKAL80ETC concert"
+
     def _update_quality(self, item: 'Item', value: int = 1):
         if self.is_item_immutable(item):
             return
@@ -38,10 +42,10 @@ class GildedRose:
             else:
                 self._decrease_quality(item)
             if item.sell_in < 0:
-                if item.name == "Aged Brie":
-                    self._increase_quality(item)
-                elif item.name == "Backstage passes to a TAFKAL80ETC concert":
+                if self.is_time_sensitive(item):
                     item.quality = 0
+                elif item.name == "Aged Brie":
+                    self._increase_quality(item)
                 else:
                     self._decrease_quality(item)
 
